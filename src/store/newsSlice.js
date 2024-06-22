@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import apiClient from '../api';
 
 const API_KEY = '7898009203c444a3ac0f25f5fb419344';
 const BASE_URL = 'https://newsapi.org/v2';
@@ -9,17 +10,22 @@ const loadFavorites = () => {
     return savedFavorites ? JSON.parse(savedFavorites) : [];
 };
 
-export const fetchNews = createAsyncThunk('news/fetchNews', async ({category,page }) => {
-    const response = await axios.get(`${BASE_URL}/top-headlines`, {
+export const fetchNews = createAsyncThunk('news/fetchNews', async ({category,page }, {rejectWithValue}) => {
+try {
+    const response = await apiClient.get(`/top-headlines`, {
         params: {
-            apiKey: API_KEY,
             category,
             page,
             pageSize: 10,
         },
     })
     return response.data.articles;
-});
+}
+catch (error) {
+    return rejectWithValue(error.response.data);
+}
+}
+);
 
 export const searchNews = createAsyncThunk('news/searchNews', async ({query, page }) => {
     const response = await axios.get(`${BASE_URL}/everything`, {

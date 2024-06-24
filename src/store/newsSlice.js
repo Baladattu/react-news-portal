@@ -10,7 +10,7 @@ const loadFavorites = () => {
     return savedFavorites ? JSON.parse(savedFavorites) : [];
 };
 
-export const fetchNews = createAsyncThunk('news/fetchNews', async ({category,page }, {rejectWithValue}) => {
+export const fetchNews = createAsyncThunk('news/fetchNews', async ({category,page }, { rejectWithValue }) => {
 try {
     const response = await apiClient.get(`/top-headlines`, {
         params: {
@@ -18,11 +18,17 @@ try {
             page,
             pageSize: 10,
         },
-    })
+    });
     return response.data.articles;
 }
 catch (error) {
-    return rejectWithValue(error.response.data);
+    if (error.response) {
+        return rejectWithValue(error.response.data);
+    } else if (error.request) {
+        return rejectWithValue({ message: 'Request was made but no response' });
+    } else {
+        return rejectWithValue({ message: error.message });
+    }
 }
 }
 );

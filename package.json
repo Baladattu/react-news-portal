@@ -46,3 +46,9 @@
     "tailwindcss": "^3.4.4"
   }
 }
+{
+  ...
+  "engindes": {
+    "node": ">=14.x"
+  },
+}
